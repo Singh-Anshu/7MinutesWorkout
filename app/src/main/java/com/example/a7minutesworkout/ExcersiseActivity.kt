@@ -3,7 +3,9 @@ package com.example.a7minutesworkout
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
@@ -25,6 +27,7 @@ class ExcersiseActivity : AppCompatActivity() {
 
     private var exerciseList : ArrayList<ExerciseModel>? = null
     private var currentExercisePosition = -1
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +65,14 @@ class ExcersiseActivity : AppCompatActivity() {
             }
         }
 
+        binding?.tvTimerExercise?.setOnClickListener {
+
+        }
 
         setUpResetView()
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
     }
 
     private fun setUpResetView(){
@@ -78,6 +87,7 @@ class ExcersiseActivity : AppCompatActivity() {
 
         if(restTimer != null){
             restTimer?.cancel()
+            restTimer = null
             restProgress = 0
         }
         binding?.tvUpComingExerciseValue?.text = exerciseList!![currentExercisePosition+1].getName()
@@ -98,6 +108,7 @@ class ExcersiseActivity : AppCompatActivity() {
 
         if(exerciseTimer != null){
             exerciseTimer?.cancel()
+            exerciseTimer = null
             exerciseProgress = 0
         }
 
@@ -116,6 +127,7 @@ class ExcersiseActivity : AppCompatActivity() {
                 restProgress++
                 binding?.progressBar?.progress = inputTime - restProgress
                 binding?.tvTimer?.text = (inputTime - restProgress).toString()
+
             }
 
             override fun onFinish() {
@@ -128,16 +140,21 @@ class ExcersiseActivity : AppCompatActivity() {
 
         }.start()
 
+
     }
 
     private fun setExerciseProgress(timer: Long){
         binding?.progressBarExercise?.progress = exerciseProgress
 
-        restTimer = object : CountDownTimer(timer, 1000) {
+        exerciseTimer = object : CountDownTimer(timer, 1000) {
             override fun onTick(p0: Long) {
+
+
                 exerciseProgress++
                 binding?.progressBarExercise?.progress = exerciseInputTime - exerciseProgress
-                binding?.tvTimerExercise?.text = (exerciseInputTime - exerciseProgress).toString()
+                binding?.tvTimerExercise?.text =
+                    (exerciseInputTime - exerciseProgress).toString()
+
             }
 
             override fun onFinish() {
@@ -162,6 +179,39 @@ class ExcersiseActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if(restTimer != null){
+            restTimer?.start()
+        }
+
+        if(exerciseTimer != null){
+            exerciseTimer?.start()
+
+        }
+
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        if(restTimer != null){
+            restTimer?.cancel()
+        }
+
+        if(exerciseTimer != null){
+            exerciseTimer?.cancel()
+
+        }
+
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+    }
+
     override fun onDestroy() {
         super.onDestroy()
 
@@ -174,6 +224,8 @@ class ExcersiseActivity : AppCompatActivity() {
             exerciseTimer?.cancel()
             exerciseProgress = 0
         }
+
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         binding = null
     }
