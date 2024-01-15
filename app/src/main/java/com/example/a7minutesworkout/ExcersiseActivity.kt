@@ -28,6 +28,8 @@ class ExcersiseActivity : AppCompatActivity() {
     private var exerciseList : ArrayList<ExerciseModel>? = null
     private var currentExercisePosition = -1
 
+    private var isPausedRest = false
+    private var isPausedExercise = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +68,23 @@ class ExcersiseActivity : AppCompatActivity() {
         }
 
         binding?.tvTimerExercise?.setOnClickListener {
+            if(!isPausedExercise) {
+                exerciseTimer?.cancel()
+                isPausedExercise = true
+            }else{
+                isPausedExercise = false
+                exerciseTimer?.start()
+            }
+        }
 
+        binding?.tvTimer?.setOnClickListener {
+            if(!isPausedRest) {
+                restTimer?.cancel()
+                isPausedRest = true
+            }else{
+                isPausedRest= false
+                restTimer?.start()
+            }
         }
 
         setUpResetView()
@@ -182,31 +200,12 @@ class ExcersiseActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        if(restTimer != null){
-            restTimer?.start()
-        }
-
-        if(exerciseTimer != null){
-            exerciseTimer?.start()
-
-        }
-
-
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
     }
 
     override fun onPause() {
         super.onPause()
-
-        if(restTimer != null){
-            restTimer?.cancel()
-        }
-
-        if(exerciseTimer != null){
-            exerciseTimer?.cancel()
-
-        }
 
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
