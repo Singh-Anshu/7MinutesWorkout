@@ -22,6 +22,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+        binding?.buttonTextToSpeech?.setOnClickListener {
+            val intent = Intent(this@MainActivity, TextToSpeechAcctivity::class.java)
+            startActivity(intent)
+        }
     }
 
 
