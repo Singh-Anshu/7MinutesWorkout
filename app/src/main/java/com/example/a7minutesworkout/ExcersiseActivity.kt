@@ -8,9 +8,11 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.a7minutesworkout.databinding.ActivityExcersiseBinding
 import java.lang.Exception
 import java.util.Locale
@@ -37,6 +39,7 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tts : TextToSpeech? = null
     private var player: MediaPlayer? = null
 
+    private var exerciseStatusAdapter:ExerciseStatusAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,9 +99,17 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
 
         setUpResetView()
-
+        setUpExerciseStatusAdapter()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+    }
+
+    private fun setUpExerciseStatusAdapter(){
+        exerciseStatusAdapter = ExerciseStatusAdapter(exerciseList!!)
+        binding?.rvExerciseStatus?.apply {
+            layoutManager = LinearLayoutManager(this@ExcersiseActivity, LinearLayoutManager.HORIZONTAL, false)
+            adapter = exerciseStatusAdapter
+        }
     }
 
     private fun setUpResetView(){
@@ -130,7 +141,6 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         speakOut("Wait for 10 Second Next exercise is "+exerciseList!![currentExercisePosition+1].getName())
         binding?.tvUpComingExerciseValue?.text = exerciseList!![currentExercisePosition+1].getName()
-
 
         setRestProgress(REST_TIMER)
     }
@@ -175,6 +185,8 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                 // Call the exercise again and again
                 currentExercisePosition++
+                exerciseList!![currentExercisePosition].setIsSelected(true)
+                exerciseStatusAdapter?.notifyDataSetChanged()
                 exerciseProgress = 0
                 setUpExerciseView()
             }
@@ -199,7 +211,9 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
 
             override fun onFinish() {
-
+                exerciseList!![currentExercisePosition].setIsSelected(false)
+                exerciseList!![currentExercisePosition].setIsCompleted(true)
+                exerciseStatusAdapter?.notifyDataSetChanged()
                 // TODO(Step 10 - Updating the view after completing the 30 seconds exercise.)
                 // START
                 if (currentExercisePosition < exerciseList?.size!! - 1) {

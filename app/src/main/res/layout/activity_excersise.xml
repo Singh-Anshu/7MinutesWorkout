@@ -30,7 +30,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
     <ImageView
         android:id="@+id/exerciseImg"
         android:layout_width="match_parent"
@@ -60,14 +59,13 @@
         app:layout_constraintTop_toBottomOf="@+id/exerciseImg"/>
 
 
-
     <FrameLayout
         android:id="@+id/flRestView"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/item_circular_color_accent_border"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/rvExerciseStatus"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvExerciseName">
@@ -105,6 +103,36 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/tvUpComingExerciseLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="@string/upcoming_exercise"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/flExerciseView"
+        app:layout_constraintStart_toStartOf="@id/flExerciseView"
+        app:layout_constraintTop_toBottomOf="@+id/flExerciseView"/>
+
+    <TextView
+        android:id="@+id/tvUpComingExerciseValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:fontFamily="@font/poppins_medium"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:layout_margin="@dimen/eight_dp"
+        android:maxLength="100"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/tvUpComingExerciseLabel"
+        app:layout_constraintStart_toStartOf="@id/tvUpComingExerciseLabel"
+        app:layout_constraintTop_toBottomOf="@+id/tvUpComingExerciseLabel"/>
+
     <FrameLayout
         android:id="@+id/flExerciseView"
         android:layout_width="100dp"
@@ -113,9 +141,9 @@
         android:visibility="visible"
         android:layout_marginBottom="10dp"
         android:background="@drawable/item_circular_color_accent_border"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/rvExerciseStatus"
         app:layout_constraintTop_toBottomOf="@id/tvExerciseName">
 
 
@@ -151,34 +179,16 @@
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/tvUpComingExerciseLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorAccent"
-        android:textStyle="bold"
-        android:textSize="22sp"
-        android:fontFamily="@font/poppins_regular"
-        android:text="@string/upcoming_exercise"
-        android:layout_marginTop="@dimen/ten_dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@id/flExerciseView"
-        app:layout_constraintStart_toStartOf="@id/flExerciseView"
-        app:layout_constraintTop_toBottomOf="@+id/flExerciseView"/>
 
-    <TextView
-        android:id="@+id/tvUpComingExerciseValue"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvExerciseStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:fontFamily="@font/poppins_medium"
-        android:textStyle="bold"
-        android:textSize="22sp"
-        android:layout_margin="@dimen/eight_dp"
-        android:maxLength="100"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@id/tvUpComingExerciseLabel"
-        app:layout_constraintStart_toStartOf="@id/tvUpComingExerciseLabel"
-        app:layout_constraintTop_toBottomOf="@+id/tvUpComingExerciseLabel"/>
+        tools:listitem="@layout/item_exercise_status"
+        android:orientation="horizontal"
+        android:layout_margin="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
