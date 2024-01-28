@@ -1,5 +1,6 @@
 package com.example.a7minutesworkout
 
+import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -211,20 +212,24 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
 
             override fun onFinish() {
-                exerciseList!![currentExercisePosition].setIsSelected(false)
-                exerciseList!![currentExercisePosition].setIsCompleted(true)
-                exerciseStatusAdapter?.notifyDataSetChanged()
+
                 // TODO(Step 10 - Updating the view after completing the 30 seconds exercise.)
                 // START
                 if (currentExercisePosition < exerciseList?.size!! - 1) {
+                    exerciseList!![currentExercisePosition].setIsSelected(false)
+                    exerciseList!![currentExercisePosition].setIsCompleted(true)
+                    exerciseStatusAdapter?.notifyDataSetChanged()
                     setUpResetView()
                 } else {
 
-                    Toast.makeText(
+                    finish()
+                    val intent = Intent(this@ExcersiseActivity, FinishActivity::class.java)
+                    startActivity(intent)
+                    /*Toast.makeText(
                         this@ExcersiseActivity,
                         "Congratulations! You have completed the 7 minutes workout.",
                         Toast.LENGTH_SHORT
-                    ).show()
+                    ).show()*/
                 }
                 // END
 

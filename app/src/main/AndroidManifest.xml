@@ -4,9 +4,10 @@
 
     <queries>
         <intent>
-            <action android:name="android.intent.action.TTS_SERVICE"/>
+            <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
     </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -17,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme._7MinutesWorkout"
         tools:targetApi="31">
+        <activity
+            android:name=".FinishActivity"
+            android:exported="false" />
         <activity
             android:name=".TextToSpeechAcctivity"
             android:exported="false" />
