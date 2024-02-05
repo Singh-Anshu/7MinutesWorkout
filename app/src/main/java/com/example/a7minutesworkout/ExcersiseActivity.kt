@@ -53,6 +53,7 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
         tts = TextToSpeech(this, this)
+        // Getting list of all exercise from Constants class
         exerciseList = Constants.defaultExerciseList()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
