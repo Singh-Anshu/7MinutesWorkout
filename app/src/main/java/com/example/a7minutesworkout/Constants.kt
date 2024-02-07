@@ -3,6 +3,8 @@ package com.example.a7minutesworkout
 class Constants {
 
     companion object {
+       const val  DB_NAME = "Exercise_DB"
+
 
         // The drawable images used here are added in the drawable folder.
         /**

@@ -13,8 +13,13 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.a7minutesworkout.databinding.ActivityExcersiseBinding
+import com.example.a7minutesworkout.db.ExerciseDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.Locale
 
@@ -42,6 +47,8 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private var exerciseStatusAdapter:ExerciseStatusAdapter? = null
 
+    lateinit var database : ExerciseDatabase ? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExcersiseBinding.inflate(layoutInflater)
@@ -53,9 +60,15 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
         tts = TextToSpeech(this, this)
+
+        // Initalizing Room DB
+        database?.getAppDatabase(applicationContext)
+
+
         // Getting list of all exercise from Constants class
         exerciseList = Constants.defaultExerciseList()
-
+        // inserting the data in Room Database
+        insertExerciseData()
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 showConfirmationDialog(
@@ -105,6 +118,13 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
     }
+    private fun insertExerciseData(exerciseList: List<ExerciseModel>) {
+        // Use CoroutineScope to launch a coroutine for suspend function
+        lifecycleScope.launch(Dispatchers.IO) {
+            database?.exerciseDao()?.insertExerciseData(exerciseList)
+        }
+    }
+
 
     private fun setUpExerciseStatusAdapter(){
         exerciseStatusAdapter = ExerciseStatusAdapter(exerciseList!!)
