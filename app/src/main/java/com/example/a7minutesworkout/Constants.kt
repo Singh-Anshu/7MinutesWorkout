@@ -10,7 +10,7 @@ class Constants {
         /**
          * Here we are adding all exercises to a single list with all the default values.
          */
-        fun defaultExerciseList(): ArrayList<ExerciseModel> {
+        fun defaultExerciseList(): List<ExerciseModel> {
 
             val exerciseList = ArrayList<ExerciseModel>()
 

@@ -9,23 +9,21 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.a7minutesworkout.databinding.ActivityExcersiseBinding
 import com.example.a7minutesworkout.db.ExerciseDatabase
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.util.Locale
 
 class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private var binding: ActivityExcersiseBinding? = null
+    private val mTag = "ExcersiseActivity"
 
     private var restTimer: CountDownTimer? = null
     private var restProgress = 0
@@ -36,7 +34,7 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var exerciseTimer: CountDownTimer? = null
     private var exerciseProgress = 0
 
-    private var exerciseList : ArrayList<ExerciseModel>? = null
+    private var exerciseList : List<ExerciseModel>? = null
     private var currentExercisePosition = -1
 
     private var isPausedRest = false
@@ -47,7 +45,7 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private var exerciseStatusAdapter:ExerciseStatusAdapter? = null
 
-    lateinit var database : ExerciseDatabase ? = null
+    var database : ExerciseDatabase ? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,9 +64,10 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
 
         // Getting list of all exercise from Constants class
-        exerciseList = Constants.defaultExerciseList()
+
         // inserting the data in Room Database
-        insertExerciseData()
+        insertExerciseData(Constants.defaultExerciseList())
+
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 showConfirmationDialog(
@@ -94,10 +93,10 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
 
         binding?.tvTimerExercise?.setOnClickListener {
-            if(!isPausedExercise) {
+            if (!isPausedExercise) {
                 exerciseTimer?.cancel()
                 isPausedExercise = true
-            }else{
+            } else {
                 isPausedExercise = false
                 exerciseTimer?.start()
             }
@@ -114,20 +113,40 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
 
         setUpResetView()
-        setUpExerciseStatusAdapter()
+        //setUpExerciseStatusAdapter()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
     }
     private fun insertExerciseData(exerciseList: List<ExerciseModel>) {
         // Use CoroutineScope to launch a coroutine for suspend function
         lifecycleScope.launch(Dispatchers.IO) {
-            database?.exerciseDao()?.insertExerciseData(exerciseList)
+           val insertedId =  database?.exerciseDao()?.insertExerciseData(exerciseList) ?: 0
+
+            if (insertedId > 0) {
+                // Insertion successful
+                getExerciseDataFromDB()
+            } else {
+                // Insertion failed
+                Log.i(mTag, "Insertion Failed")
+            }
         }
     }
 
+    private fun getExerciseDataFromDB(){
+        lifecycleScope.launch(Dispatchers.IO) {
 
-    private fun setUpExerciseStatusAdapter(){
-        exerciseStatusAdapter = ExerciseStatusAdapter(exerciseList!!)
+            database?.exerciseDao()?.getExerciseAllData()?.collect {  _exerciseList ->
+                exerciseList = _exerciseList
+                setUpExerciseStatusAdapter(_exerciseList)
+            }
+        }
+
+    }
+
+
+    private fun setUpExerciseStatusAdapter( itemList: List<ExerciseModel>?){
+//        exerciseStatusAdapter = ExerciseStatusAdapter(exerciseList!!)
+        exerciseStatusAdapter = ExerciseStatusAdapter(itemList)
         binding?.rvExerciseStatus?.apply {
             layoutManager = LinearLayoutManager(this@ExcersiseActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = exerciseStatusAdapter
@@ -161,8 +180,9 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             restTimer = null
             restProgress = 0
         }
-        speakOut("Wait for 10 Second Next exercise is "+exerciseList!![currentExercisePosition+1].getName())
-        binding?.tvUpComingExerciseValue?.text = exerciseList!![currentExercisePosition+1].getName()
+//        speakOut("Wait for 10 Second Next exercise is "+exerciseList!![currentExercisePosition+1].getName())
+        speakOut("Wait for 10 Second Next exercise is "+exerciseList?.get(currentExercisePosition+1)?.name)
+        binding?.tvUpComingExerciseValue?.text = exerciseList?.get(currentExercisePosition+1)?.name.toString().trim()
 
         setRestProgress(REST_TIMER)
     }
@@ -183,10 +203,13 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             exerciseProgress = 0
         }
 
-        speakOut(exerciseList!![currentExercisePosition].getName())
+//        speakOut(exerciseList!![currentExercisePosition].getName())
+         speakOut(exerciseList?.get(currentExercisePosition)?.name.toString())
 
-        binding?.exerciseImg?.setImageResource(exerciseList!![currentExercisePosition].getImage())
-        binding?.tvExerciseName?.text = exerciseList!![currentExercisePosition].getName()
+//        binding?.exerciseImg?.setImageResource(exerciseList!![currentExercisePosition].getImage())
+        binding?.exerciseImg?.setImageResource(exerciseList?.get(currentExercisePosition)?.image!!)
+//        binding?.tvExerciseName?.text = exerciseList!![currentExercisePosition].getName()
+        binding?.tvExerciseName?.text = exerciseList?.get(currentExercisePosition)?.name.toString().trim()
 
         setExerciseProgress(EXERCISE_TIMER)
     }
@@ -207,6 +230,7 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                 // Call the exercise again and again
                 currentExercisePosition++
+//                exerciseList!![currentExercisePosition].setIsSelected(true)
                 exerciseList!![currentExercisePosition].setIsSelected(true)
                 exerciseStatusAdapter?.notifyDataSetChanged()
                 exerciseProgress = 0
@@ -299,14 +323,15 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     override fun onInit(status: Int) {
 
-        if(status == TextToSpeech.SUCCESS){
+        if (status == TextToSpeech.SUCCESS) {
             val result = tts?.setLanguage(Locale.US)
 
-            if(result == TextToSpeech.LANG_MISSING_DATA ||
-                result == TextToSpeech.LANG_NOT_SUPPORTED){
+            if (result == TextToSpeech.LANG_MISSING_DATA ||
+                result == TextToSpeech.LANG_NOT_SUPPORTED
+            ) {
                 Log.e("TTS", "The Language is not supported")
             }
-        }else{
+        } else {
             Log.e("TTS", "Initializing is Failed!")
         }
     }

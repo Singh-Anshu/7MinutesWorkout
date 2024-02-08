@@ -7,8 +7,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.a7minutesworkout.databinding.ItemExerciseStatusBinding
 
-class ExerciseStatusAdapter(private val itemList: ArrayList<ExerciseModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    class ExerciseStatusViewHolder(binding: ItemExerciseStatusBinding): RecyclerView.ViewHolder(binding.root) {
+class ExerciseStatusAdapter(var itemList: List<ExerciseModel>?) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    class ExerciseStatusViewHolder(binding: ItemExerciseStatusBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         val b: ItemExerciseStatusBinding = binding
     }
@@ -16,38 +18,51 @@ class ExerciseStatusAdapter(private val itemList: ArrayList<ExerciseModel>): Rec
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ExerciseStatusViewHolder(
             ItemExerciseStatusBinding.inflate(
-                LayoutInflater.from(parent.context), parent, false))
+                LayoutInflater.from(parent.context), parent, false
+            )
+        )
     }
 
     override fun getItemCount(): Int {
-        return  itemList.size
+        return itemList!!.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if( holder is ExerciseStatusViewHolder){
+        if (holder is ExerciseStatusViewHolder) {
 
-            val model :ExerciseModel = itemList[position]
+            // val model :ExerciseModel = itemList[position]
+            itemList?.get(position)?.let { model ->
 
-            holder.b.tvItem.text = model.getId().toString()
+                holder.b.tvItem.text = model.id.toString()
 
-            when{
-                model.getIsSelected() -> {
-                    holder.b.tvItem.background = ContextCompat.getDrawable(holder.itemView.context,
-                        R.drawable.item_circular_color_white_background)
-                    holder.b.tvItem.setTextColor(Color.parseColor("#212121"))
+//            holder.b.tvItem.text = model.getId().toString()
+
+                when {
+                    model.isSelected -> {
+                        holder.b.tvItem.background = ContextCompat.getDrawable(
+                            holder.itemView.context,
+                            R.drawable.item_circular_color_white_background
+                        )
+                        holder.b.tvItem.setTextColor(Color.parseColor("#212121"))
+                    }
+
+                    model.isCompleted -> {
+                        holder.b.tvItem.background = ContextCompat.getDrawable(
+                            holder.itemView.context,
+                            R.drawable.item_circular_color_accent_background
+                        )
+                        holder.b.tvItem.setTextColor(Color.parseColor("#FFFFFF"))
+                    }
+
+                    else -> {
+                        holder.b.tvItem.background = ContextCompat.getDrawable(
+                            holder.itemView.context,
+                            R.drawable.item_circular_color_gray_background
+                        )
+                        holder.b.tvItem.setTextColor(Color.parseColor("#212121"))
+                    }
                 }
 
-                model.getIsCompleted() -> {
-                    holder.b.tvItem.background = ContextCompat.getDrawable(holder.itemView.context,
-                        R.drawable.item_circular_color_accent_background)
-                    holder.b.tvItem.setTextColor(Color.parseColor("#FFFFFF"))
-                }
-
-                else -> {
-                    holder.b.tvItem.background = ContextCompat.getDrawable(holder.itemView.context,
-                        R.drawable.item_circular_color_gray_background)
-                    holder.b.tvItem.setTextColor(Color.parseColor("#212121"))
-                }
             }
         }
     }

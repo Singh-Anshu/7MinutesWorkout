@@ -9,19 +9,19 @@ data class ExerciseModel(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "Id")
-    private var id: Int,
+    var id: Int,
 
     @ColumnInfo(name = "ExerciseName")
-    private var name: String,
+    var name: String,
 
     @ColumnInfo(name = "Image")
-    private var image: Int,
+    var image: Int,
 
     @ColumnInfo(name = "IsCompleted")
-    private var isCompleted: Boolean,
+    var isCompleted: Boolean,
 
     @ColumnInfo(name = "IsSelected")
-    private var isSelected: Boolean
+    var isSelected: Boolean
 )
 
 /*
