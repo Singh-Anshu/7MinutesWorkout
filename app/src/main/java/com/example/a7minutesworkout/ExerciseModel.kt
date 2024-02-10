@@ -21,7 +21,10 @@ data class ExerciseModel(
     var isCompleted: Boolean,
 
     @ColumnInfo(name = "IsSelected")
-    var isSelected: Boolean
+    var isSelected: Boolean,
+
+    var isCompleted2: Boolean = false,
+    var isSelected2: Boolean = false
 )
 
 /*

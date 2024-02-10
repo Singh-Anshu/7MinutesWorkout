@@ -38,7 +38,7 @@ class ExerciseStatusAdapter(var itemList: List<ExerciseModel>?) :
 //            holder.b.tvItem.text = model.getId().toString()
 
                 when {
-                    model.isSelected -> {
+                    model.isSelected2 -> {
                         holder.b.tvItem.background = ContextCompat.getDrawable(
                             holder.itemView.context,
                             R.drawable.item_circular_color_white_background
@@ -46,7 +46,7 @@ class ExerciseStatusAdapter(var itemList: List<ExerciseModel>?) :
                         holder.b.tvItem.setTextColor(Color.parseColor("#212121"))
                     }
 
-                    model.isCompleted -> {
+                    model.isCompleted2 -> {
                         holder.b.tvItem.background = ContextCompat.getDrawable(
                             holder.itemView.context,
                             R.drawable.item_circular_color_accent_background
