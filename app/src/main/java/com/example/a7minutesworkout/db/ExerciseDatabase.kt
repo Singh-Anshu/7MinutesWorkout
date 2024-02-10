@@ -1,14 +1,13 @@
 package com.example.a7minutesworkout.db
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.a7minutesworkout.Constants.Companion.DB_NAME
 import com.example.a7minutesworkout.ExerciseModel
 
-@Database(entities = [ExerciseModel::class], version = 1)
+@Database(entities = [ExerciseModel::class], version = 1, exportSchema = false)
 abstract class ExerciseDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
 

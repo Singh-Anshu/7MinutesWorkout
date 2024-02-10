@@ -66,7 +66,8 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         // inserting the data in Room Database
         insertExerciseData(Constants.defaultExerciseList())
-
+        // gettting excerise list from room DB
+        getExerciseDataFromDB()
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 showConfirmationDialog(
@@ -112,7 +113,7 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
 
         setUpResetView()
-        setUpExerciseStatusAdapter(emptyList())
+        //setUpExerciseStatusAdapter(emptyList())
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
     }
@@ -120,15 +121,15 @@ class ExcersiseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         // Use CoroutineScope to launch a coroutine for suspend function
         lifecycleScope.launch(Dispatchers.IO) {
         try {
-            val insertedId = database?.exerciseDao()?.insertExerciseData(exerciseList) ?: 0
+            database?.exerciseDao()?.insertExerciseData(exerciseList)
 
-            if (insertedId > 0) {
+           // if (insertedId > 0) {
                 // Insertion successful
-                getExerciseDataFromDB()
-            } else {
+
+          // } else {
                 // Insertion failed
-                Log.i(mTag, "Insertion Failed")
-            }
+               // Log.i(mTag, "Insertion Failed")
+           // }
 
         } catch (e: Exception) {
             e.printStackTrace()

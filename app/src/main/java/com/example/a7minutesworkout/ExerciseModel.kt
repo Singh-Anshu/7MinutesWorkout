@@ -17,12 +17,6 @@ data class ExerciseModel(
     @ColumnInfo(name = "Image")
     var image: Int,
 
-    @ColumnInfo(name = "IsCompleted")
-    var isCompleted: Boolean,
-
-    @ColumnInfo(name = "IsSelected")
-    var isSelected: Boolean,
-
     var isCompleted2: Boolean = false,
     var isSelected2: Boolean = false
 )
